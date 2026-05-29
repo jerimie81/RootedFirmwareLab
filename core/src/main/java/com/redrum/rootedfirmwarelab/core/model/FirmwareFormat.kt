@@ -1,0 +1,26 @@
+package com.redrum.rootedfirmwarelab.core.model
+
+enum class FirmwareFormat {
+    SPARSE_IMG,
+    RAW_IMG,
+    PAYLOAD_BIN,
+    ELF,
+    ANDROID_BOOT_IMG,
+    VB_META,
+    SUPER_IMG,
+    DTB,
+    DTBO,
+    FSTAB,
+    GPT,
+    MBR,
+    APK,
+    APEX,
+    OAT,
+    VDEX,
+    ZIP,
+    GZIP,
+    LZ4,
+    BROTLI,
+    XZ,
+    UNKNOWN,
+}
