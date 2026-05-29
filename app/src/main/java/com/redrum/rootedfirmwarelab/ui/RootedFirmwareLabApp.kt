@@ -262,7 +262,7 @@ fun LabRootMissingScreen(onRetry: () -> Unit) {
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
         ) {
             Column(Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                Icon(Icons.Default.Error, contentDescription = null, tint = MaterialTheme.colorScheme.onErrorContainer)
+                Icon(Icons.Default.Error, contentDescription = "Error indicator", tint = MaterialTheme.colorScheme.onErrorContainer)
                 Spacer(Modifier.height(12.dp))
                 Text(
                     "Root access required",

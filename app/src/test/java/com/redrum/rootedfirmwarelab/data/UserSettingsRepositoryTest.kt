@@ -12,7 +12,12 @@ import java.io.File
 
 @org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner::class)
 class UserSettingsRepositoryTest {
-    private val context: Context = androidx.test.core.app.ApplicationProvider.getApplicationContext()
+    private lateinit var context: Context
+
+    @Before
+    fun setup() {
+        context = org.robolectric.RuntimeEnvironment.getApplication()
+    }
 
     @Before
     fun clearState() {
