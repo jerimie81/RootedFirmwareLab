@@ -14,6 +14,12 @@ class RootMountService {
         }
     }
 
+    private val SENSITIVE_PARTITIONS = listOf("boot", "recovery", "vendor", "system", "super")
+
+    fun isSensitivePartition(partitionName: String): Boolean {
+        return SENSITIVE_PARTITIONS.any { partitionName.contains(it, ignoreCase = true) }
+    }
+
     fun mountReadOnly(imagePath: String, mountPoint: String): List<String> {
         return listOf(
             "su",
@@ -62,6 +68,7 @@ class RootMountService {
 
     fun flashPartition(imagePath: String, partitionName: String): Boolean {
         if (!isRootAvailable()) return false
+        if (isSensitivePartition(partitionName)) return false // Safety guard
         val blockPath = "/dev/block/by-name/$partitionName"
         val imageFile = File(imagePath)
         if (!imageFile.exists()) return false

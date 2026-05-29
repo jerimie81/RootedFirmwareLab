@@ -44,6 +44,7 @@ import com.redrum.rootedfirmwarelab.nativebridge.service.RootMountService
 import com.redrum.rootedfirmwarelab.ui.LabRootMissingScreen
 import com.redrum.rootedfirmwarelab.ui.LabRootValidatorScreen
 import com.redrum.rootedfirmwarelab.ui.LabRootedFirmwareApp
+import com.redrum.rootedfirmwarelab.ui.onboarding.OnboardingWalkthrough
 import com.redrum.rootedfirmwarelab.ui.state.ThemeConfig
 import com.redrum.rootedfirmwarelab.ui.state.UiStateStore
 import kotlinx.coroutines.CoroutineScope
@@ -102,26 +103,42 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             var themeConfig by remember { mutableStateOf(ThemeConfig()) }
+            var showOnboarding by remember { mutableStateOf(!uiStateStore.isFirstRunComplete()) }
+            
             LaunchedEffect(Unit) {
                 themeConfig = uiStateStore.loadThemeConfig()
             }
             var isRooted by remember { mutableStateOf<Boolean?>(null) }
 
-            when (isRooted) {
-                null -> LabRootValidatorScreen(onResult = { rooted -> isRooted = rooted })
-                true -> LabRootedFirmwareApp(
-                    rootMountService = rootMountService,
-                    firmwareBridge = firmwareBridge,
-                    logManager = logManager,
-                    terminalSession = terminalSession,
-                    uiStateStore = uiStateStore,
-                    themeConfig = themeConfig,
-                    onThemeConfigChange = { updated ->
-                        themeConfig = updated
-                        uiStateStore.saveThemeConfig(updated)
-                    },
+            if (showOnboarding) {
+                OnboardingWalkthrough(
+                    steps = listOf(
+                        "Welcome to RootedFirmwareLab" to "A professional Android ROM kitchen.",
+                        "Safety First" to "Mount guards protect sensitive partitions.",
+                        "Get Started" to "Select a firmware image to begin."
+                    ),
+                    onDismiss = {
+                        uiStateStore.markFirstRunComplete()
+                        showOnboarding = false
+                    }
                 )
-                false -> LabRootMissingScreen(onRetry = { isRooted = null })
+            } else {
+                when (isRooted) {
+                    null -> LabRootValidatorScreen(onResult = { rooted -> isRooted = rooted })
+                    true -> LabRootedFirmwareApp(
+                        rootMountService = rootMountService,
+                        firmwareBridge = firmwareBridge,
+                        logManager = logManager,
+                        terminalSession = terminalSession,
+                        uiStateStore = uiStateStore,
+                        themeConfig = themeConfig,
+                        onThemeConfigChange = { updated ->
+                            themeConfig = updated
+                            uiStateStore.saveThemeConfig(updated)
+                        },
+                    )
+                    false -> LabRootMissingScreen(onRetry = { isRooted = null })
+                }
             }
         }
     }
